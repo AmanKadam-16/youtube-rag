@@ -22,6 +22,10 @@ app.add_middleware(
 def root():
     return JSONResponse(status_code=200, content="System Operational.")
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 
 if __name__ == "__main__":
     import uvicorn

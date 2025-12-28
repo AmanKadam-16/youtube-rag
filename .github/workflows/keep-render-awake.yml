@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: Ping Render Health Endpoint
         run: |
-          curl -s https://youtube-rag-1t81.onrender.com/ > /dev/null
+          curl -s https://youtube-rag-1t81.onrender.com/health > /dev/null

@@ -40,7 +40,7 @@ def transcript_extractor(video_url: str) -> list[TranscriptExtract]:
 
 # CHUNKING STRATEGY | FIXED LENGTH
 def chunk_transcript(
-    transcript_info: list[TranscriptExtract], chunk_size: int = 500, over_lap: int = 50
+    transcript_info: list[TranscriptExtract], chunk_size: int = 500, over_lap: int = 5
 ) -> list[str]:
     print("Step 02")
     print("Transcript Chunking in Progress...")
@@ -52,9 +52,9 @@ def chunk_transcript(
         if not transcript:
             continue
         if len(last_chunk + current_text) <= chunk_size:
-            result[-1] += current_text
+            result[-1] += f" {current_text}"
         else:
-            result.append(last_chunk[-over_lap] + " " + current_text)
+            result.append(last_chunk.split(" ")[-over_lap] + " " + current_text)
     return result
 
 

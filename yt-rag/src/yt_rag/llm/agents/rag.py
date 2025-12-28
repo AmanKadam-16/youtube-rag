@@ -12,7 +12,7 @@ def rag_agent(state: AgentState):
     for result_id in dependent_results:
         prev_result_context.append(state[result_id])
     rag_parameter = {"user_query": agent_goal}
-    model_response = rag_search(rag_parameter)
+    model_response = rag_search(arg=rag_parameter, collection_id=state["collection_id"])
     state["results"][step_index + 1] = str(model_response)
     state["final_output"] = model_response
     state["current_step_index"] += 1

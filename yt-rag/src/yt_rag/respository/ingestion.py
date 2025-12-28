@@ -36,11 +36,11 @@ class IngestionRepository:
         return collection_exists
 
     @staticmethod
-    def get_similar_chunks(query_embedding: list[float], db: Session, top_k=10):
+    def get_similar_chunks(query_embedding: list[float], db: Session, top_k=10, collection_id:str = ""):
         distance = EmbeddingStore.embedding.cosine_distance(query_embedding)
         similar_chunks = (
             db.query(EmbeddingStore, distance.label("distance"))
-            .filter(EmbeddingStore.is_active)
+            .filter(EmbeddingStore.is_active, EmbeddingStore.collection_code == collection_id)
             .order_by(asc(distance))
             .limit(top_k)
             .all()
@@ -55,3 +55,12 @@ class IngestionRepository:
             }
             resultant_chunks.append(chunk_info)
         return resultant_chunks
+    
+    @staticmethod
+    def list_collections(db: Session):
+        collections = (
+            db.query(EmbeddingStore)
+            .distinct(EmbeddingStore.collection_code)
+            .all()
+        )
+        return collections

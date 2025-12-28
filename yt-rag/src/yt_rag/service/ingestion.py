@@ -68,3 +68,18 @@ def get_context(user_query: str, db: Session):
 
 def get_video_frame():
     ...
+"""
+    @staticmethod
+    def list_collections(db: Session):
+        collections = (
+            db.query(EmbeddingStore)
+            .distinct(EmbeddingStore.collection_code)
+            .all()
+        )
+        return collections
+"""
+
+def list_collections(db: Session)-> list[str]:
+    collections = IngestionRepository.list_collections(db=db)
+    collection_list = [col.collection_code for col in collections]
+    return collection_list

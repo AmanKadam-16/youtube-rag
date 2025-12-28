@@ -13,6 +13,7 @@ class AgentState(TypedDict):
     goal: str
     detail_plan: list[Plan]
     results: Dict[int, Any]
+    collection_id: str
     current_agent: str
     current_step_index: int
     final_output: str

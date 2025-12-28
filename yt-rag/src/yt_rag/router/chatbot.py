@@ -6,16 +6,18 @@ from src.yt_rag.utils.util import export_mermaid_graph
 from src.yt_rag.llm.graph.graph import app as planner_agentic_graph_app
 
 
+
 router = APIRouter(prefix="/chatbot", tags=["chatbot"])
 
 
-@router.post("/planner-agent-conversate")
+@router.post("/planner-agent-conversate", response_model=chatbot_schema.ChatResponse)
 def plan_and_execute(user_input: chatbot_schema.ChatInput):
     try:
         payload = {
             "user_input": user_input.user_prompt,
             "results": {},
             "current_step_index": 0,
+            "collection_id": user_input.collection_id,
             "detail_plan": [],
         }
         export_mermaid_graph(

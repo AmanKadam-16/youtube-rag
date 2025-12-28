@@ -21,3 +21,9 @@ app.add_middleware(
 @app.get("/")
 def root():
     return JSONResponse(status_code=200, content="System Operational.")
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)

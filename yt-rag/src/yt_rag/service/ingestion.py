@@ -17,11 +17,18 @@ def fetch_video_transcript(video_url: str) -> list[ingest_schema.TranscriptExtra
 
 
 def process_embeddings(
-    embeddings: list[Any], chunks_list: list[str], collection_code: str, db: Session
+    embeddings: list[Any],
+    chunks_list: list[str],
+    collection_code: str,
+    video_url: str,
+    timestamps: list[float],
+    db: Session,
 ) -> ingest_schema.EmbeddingStatus:
     embeddings_entries = []
     for idx, embedding in enumerate(embeddings):
-        chunk_metadata = ingest_schema.ChunkMetadata(chunk_no=idx)
+        chunk_metadata = ingest_schema.ChunkMetadata(
+            chunk_no=idx, yt_video_url=video_url, start_timestamp=timestamps[idx]
+        )
         store_entry = ingest_schema.EmbeddingEntry(
             chunk=chunks_list[idx],
             collection_code=collection_code,
@@ -36,7 +43,11 @@ def process_embeddings(
 
 
 def process_transcript_chunks(
-    chunks_list: list[str], collection_code: str, db: Session
+    chunks_list: list[str],
+    collection_code: str,
+    video_url: str,
+    timestamps: list[float],
+    db: Session,
 ) -> ingest_schema.EmbeddingStatus:
     print("Step 03")
     chunk_embeddings = create_embeddings(chunks_list=chunks_list)
@@ -44,6 +55,8 @@ def process_transcript_chunks(
         embeddings=chunk_embeddings,
         chunks_list=chunks_list,
         collection_code=collection_code,
+        video_url=video_url,
+        timestamps=timestamps,
         db=db,
     )
     return processed_embeddings_result
@@ -54,9 +67,13 @@ def ingest_yt_video(
 ) -> ingest_schema.EmbeddingStatus:
     print("Transcript Extraction Started.")
     transcript = fetch_video_transcript(video_url=video_info.yt_video_url)
-    transcript_chunks = chunk_transcript(transcript_info=transcript)
+    transcript_chunks, timestamps = chunk_transcript(transcript_info=transcript)
     ingestion_result = process_transcript_chunks(
-        chunks_list=transcript_chunks, collection_code=video_info.collection_code, db=db
+        chunks_list=transcript_chunks,
+        collection_code=video_info.collection_code,
+        video_url=video_info.yt_video_url,
+        timestamps=timestamps,
+        db=db,
     )
     return ingestion_result
 
@@ -66,8 +83,9 @@ def get_context(user_query: str, db: Session):
     return result
 
 
-def get_video_frame():
-    ...
+def get_video_frame(): ...
+
+
 """
     @staticmethod
     def list_collections(db: Session):
@@ -79,7 +97,8 @@ def get_video_frame():
         return collections
 """
 
-def list_collections(db: Session)-> list[str]:
+
+def list_collections(db: Session) -> list[str]:
     collections = IngestionRepository.list_collections(db=db)
     collection_list = [col.collection_code for col in collections]
     return collection_list

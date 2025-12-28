@@ -29,3 +29,5 @@ class EmbeddingStatus(BaseModel):
 
 class ChunkMetadata(BaseModel):
     chunk_no: int
+    yt_video_url: str
+    start_timestamp: float

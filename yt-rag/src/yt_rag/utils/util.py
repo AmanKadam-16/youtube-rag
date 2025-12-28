@@ -41,12 +41,14 @@ def transcript_extractor(video_url: str) -> list[TranscriptExtract]:
 # CHUNKING STRATEGY | FIXED LENGTH
 def chunk_transcript(
     transcript_info: list[TranscriptExtract], chunk_size: int = 500, over_lap: int = 5
-) -> list[str]:
+) -> tuple[list[str], list[float]]:
     print("Step 02")
     print("Transcript Chunking in Progress...")
     seed_chunk = transcript_info[0].text
     result = [seed_chunk]
-    for transcript in transcript_info:
+    timestamps = [transcript_info[0].start]
+
+    for i, transcript in enumerate(transcript_info[1:], start=1):
         last_chunk = result[-1]
         current_text = transcript.text
         if not transcript:
@@ -55,7 +57,9 @@ def chunk_transcript(
             result[-1] += f" {current_text}"
         else:
             result.append(last_chunk.split(" ")[-over_lap] + " " + current_text)
-    return result
+            timestamps.append(transcript.start)
+
+    return result, timestamps
 
 
 def create_embeddings(chunks_list: list[str]) -> list[dict]:
@@ -90,4 +94,3 @@ def export_mermaid_graph(app, output_path="graph_01_version.mmd"):
     output_path.write_text(mermaid_code, encoding="utf-8")
 
     return output_path
-

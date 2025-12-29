@@ -65,7 +65,7 @@ def chat_agent(state: AgentState):
         - `yt_video_url`
         - `start_timestamp`
     - Convert it into a clickable link using this format:
-        https://youtu.be/VIDEO_ID?t=SECONDS [No Decimal Places in Seconds]
+        https://youtu.be/VIDEO_ID
     - Display it as:
         ▶️ Video Source – mm:ss
 
